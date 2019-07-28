@@ -1,0 +1,1 @@
+time ./darknet detector demo ../darknet/data/coco_1cls.data ../darknet/cfg/yolov3-tiny_stores.cfg ../darknet/weights/yolov3-tiny_stores_best.weights ../imaginex/001_001_002_20190616203007.mp4 -i 0 -thresh 0.25
