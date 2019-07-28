@@ -1,6 +1,9 @@
-Forked from https://github.com/digitalbrain79/darknet-nnpack/
+Forked from https://github.com/digitalbrain79/darknet-nnpack/. 
 
-# Darknet with NNPACK
+This repo adds CPP support with an example case in `cpp/`
+
+
+# Darknet with NNPACK compiled for CPP
 NNPACK was used to optimize [Darknet](https://github.com/pjreddie/darknet) without using a GPU. It is useful for embedded devices using ARM CPUs.
 
 Idein's [qmkl](https://github.com/Idein/qmkl) is also used to accelerate the SGEMM using the GPU. This is slower than NNPACK on NEON-capable devices, and primarily useful for ARM CPUs without NEON.
@@ -15,7 +18,7 @@ sudo apt-get install python-pip
 sudo pip install --upgrade git+https://github.com/Maratyszcza/PeachPy
 sudo pip install --upgrade git+https://github.com/Maratyszcza/confu
 ```
-Install [Ninja](https://ninja-build.org/)
+### Install [Ninja](https://ninja-build.org/)
 ```
 git clone https://github.com/ninja-build/ninja.git
 cd ninja
@@ -27,18 +30,18 @@ Install clang (I'm not sure why we need this, NNPACK doesn't use it unless you s
 ```
 sudo apt-get install clang
 ```
-Install modified [NNPACK](https://github.com/shizukachan/NNPACK)
+### Install modified [NNPACK](https://github.com/shizukachan/NNPACK)
 ```
 git clone https://github.com/shizukachan/NNPACK
 cd NNPACK
 confu setup
 ```
-If you are compiling for the Pi Zero, run `python ./configure.py --backend scalar`, otherwise run `python ./configure.py --backend auto`
-It's also recommended to examine and edit https://github.com/digitalbrain79/NNPACK-darknet/blob/master/src/init.c#L215 to match your CPU architecture if you're on ARM, as the cache size detection code only works on x86.
-
-Since none of the ARM CPUs have a L3, it's [recommended](https://github.com/Maratyszcza/NNPACK/issues/33) to set L3 = L2 and set inclusive=false. This should lead to the L2 size being set equal to the L3 size.
-
-Ironically, after some trial and error, I've found that setting L3 to an arbitrary 2MB seems to work pretty well.
+Update cflags & cxxflags in `build.ninja`. Add ` -fPIC ` option.
+```
+cflags = -std=gnu99 -g -pthread -fPIC
+cxxflags = -std=gnu++11 -g -pthread -fPIC
+```
+Build it. 
 ```
 $NINJA_PATH/ninja
 bin/convolution-inference-smoketest
@@ -46,37 +49,24 @@ sudo cp -a lib/* /usr/lib/
 sudo cp include/nnpack.h /usr/include/
 sudo cp deps/pthreadpool/include/pthreadpool.h /usr/include/
 ```
-
-If the convolution-inference-smoketest fails, you've probably hit a compiler bug and will have to change to Clang or an older version of GCC. You can skip the qmkl/qasm/qbin2hex steps if you aren't targeting the QPU.
-
-Install [qmkl](https://github.com/Idein/qmkl)
-```
-sudo apt-get install cmake
-git clone https://github.com/Idein/qmkl.git
-cd qmkl
-cmake .
-make
-sudo make install
+### Build Darknet-nnpack 
+To avoid linker issues add all the *.o files of NNPACK compiled above in the Makefile. Make sure to update the paths accordingly.
 ```
 
-Install [qasm2](https://github.com/Terminus-IMRC/qpu-assembler2)
-```
-sudo apt-get install flex
-git clone https://github.com/Terminus-IMRC/qpu-assembler2
-cd qpu-assembler2
-make
-sudo make install
+NNPACKOBJS = ../NNPACK/build/src/convolution-inference.c.o ../NNPACK/build/src/convolution-input-gradient.c.o ../NNPACK/build/src/convolution-kernel-gradient.c.o ../NNPACK/build/src/convolution-output.c.o ../NNPACK/build/src/fully-connected-inference.c.o ../NNPACK/build/src/fully-connected-output.c.o ../NNPACK/build/src/init.c.o ../NNPACK/build/src/pooling-output.c.o ../NNPACK/build/src/relu-input-gradient.c.o ../NNPACK/build/src/relu-output.c.o ../NNPACK/build/src/softmax-output.c.o ../NNPACK/build/src/ref/convolution-input-gradient.c.o ../NNPACK/build/src/ref/convolution-kernel.c.o ../NNPACK/build/src/ref/convolution-output.c.o ../NNPACK/build/src/ref/fully-connected-output.c.o ../NNPACK/build/src/ref/max-pooling-output.c.o ../NNPACK/build/src/ref/relu-input-gradient.c.o ../NNPACK/build/src/ref/relu-output.c.o ../NNPACK/build/src/ref/softmax-output.c.o ../NNPACK/build/src/ref/fft/aos.c.o ../NNPACK/build/src/ref/fft/forward-dualreal.c.o ../NNPACK/build/src/ref/fft/forward-real.c.o ../NNPACK/build/src/ref/fft/inverse-dualreal.c.o ../NNPACK/build/src/ref/fft/inverse-real.c.o ../NNPACK/build/src/ref/fft/soa.c.o ../NNPACK/build/src/psimd/2d-fourier-16x16.c.o ../NNPACK/build/src/psimd/2d-fourier-8x8.c.o ../NNPACK/build/src/psimd/2d-winograd-8x8-3x3.c.o ../NNPACK/build/src/psimd/relu.c.o ../NNPACK/build/src/psimd/softmax.c.o ../NNPACK/build/src/psimd/blas/c4gemm.c.o ../NNPACK/build/src/psimd/blas/c4gemm-conjb.c.o ../NNPACK/build/src/psimd/blas/c4gemm-conjb-transc.c.o ../NNPACK/build/src/psimd/blas/conv1x1.c.o ../NNPACK/build/src/psimd/blas/s4c2gemm.c.o ../NNPACK/build/src/psimd/blas/s4c2gemm-conjb.c.o ../NNPACK/build/src/psimd/blas/s4c2gemm-conjb-transc.c.o ../NNPACK/build/src/psimd/blas/s4gemm.c.o ../NNPACK/build/src/psimd/blas/sdotxf.c.o ../NNPACK/build/src/psimd/blas/sgemm.c.o ../NNPACK/build/src/psimd/blas/shdotxf.c.o ../NNPACK/build/src/scalar/2d-fourier-16x16.c.o ../NNPACK/build/src/scalar/2d-fourier-8x8.c.o ../NNPACK/build/src/scalar/2d-winograd-8x8-3x3.c.o ../NNPACK/build/src/scalar/fft-aos.c.o ../NNPACK/build/src/scalar/fft-dualreal.c.o ../NNPACK/build/src/scalar/fft-real.c.o ../NNPACK/build/src/scalar/fft-soa.c.o ../NNPACK/build/src/scalar/relu.c.o ../NNPACK/build/src/scalar/softmax.c.o ../NNPACK/build/src/scalar/winograd-f6k3.c.o ../NNPACK/build/src/scalar/blas/cgemm.c.o ../NNPACK/build/src/scalar/blas/cgemm-conjb.c.o ../NNPACK/build/src/scalar/blas/cgemm-conjb-transc.c.o ../NNPACK/build/src/scalar/blas/conv1x1.c.o ../NNPACK/build/src/scalar/blas/s2gemm.c.o ../NNPACK/build/src/scalar/blas/s2gemm-transc.c.o ../NNPACK/build/src/scalar/blas/sdotxf.c.o ../NNPACK/build/src/scalar/blas/sgemm.c.o ../NNPACK/build/src/scalar/blas/shdotxf.c.o ../NNPACK/build/src/x86_64-fma/2d-fourier-16x16.py.o ../NNPACK/build/src/x86_64-fma/2d-fourier-8x8.py.o ../NNPACK/build/src/x86_64-fma/2d-winograd-8x8-3x3.py.o ../NNPACK/build/src/x86_64-fma/fft-aos.py.o ../NNPACK/build/src/x86_64-fma/fft-dualreal.py.o ../NNPACK/build/src/x86_64-fma/fft-real.py.o ../NNPACK/build/src/x86_64-fma/fft-soa.py.o ../NNPACK/build/src/x86_64-fma/ifft-dualreal.py.o ../NNPACK/build/src/x86_64-fma/ifft-real.py.o ../NNPACK/build/src/x86_64-fma/max-pooling.py.o ../NNPACK/build/src/x86_64-fma/relu.py.o ../NNPACK/build/src/x86_64-fma/softmax.c.o ../NNPACK/build/src/x86_64-fma/softmax.py.o ../NNPACK/build/src/x86_64-fma/winograd-f6k3.py.o ../NNPACK/build/src/x86_64-fma/blas/c8gemm.py.o ../NNPACK/build/src/x86_64-fma/blas/conv1x1.py.o ../NNPACK/build/src/x86_64-fma/blas/s4c6gemm.py.o ../NNPACK/build/src/x86_64-fma/blas/s8gemm.py.o ../NNPACK/build/src/x86_64-fma/blas/sdotxf.py.o ../NNPACK/build/src/x86_64-fma/blas/sgemm.py.o ../NNPACK/build/src/x86_64-fma/blas/shdotxf.py.o
+
+.
+.
+.
+
+$(SLIB): $(OBJS) $(NNPACKOBJS)
+	$(CC) $(CFLAGS) -shared $^ -lm /usr/lib/libpthreadpool.a -o $@ 
 ```
 
-Install [qbin2hex](https://github.com/Terminus-IMRC/qpu-bin-to-hex)
-```
-git clone https://github.com/Terminus-IMRC/qpu-bin-to-hex
-cd qpu-bin-to-hex
-make
-sudo make install
-```
+## CPP Example
+CPP example is located inside  `cpp/`  folder. 
+Make sure to update darknet paths in `CMakelists.txt`
 
-At this point, you can build darknet-nnpack using `make`. Be sure to edit the Makefile before compiling.
 
 ## Test
 The weight files can be downloaded from the [YOLO homepage](https://pjreddie.com/darknet/yolo/).
