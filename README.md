@@ -1,5 +1,3 @@
-Forked from https://github.com/digitalbrain79/darknet-nnpack/. 
-
 This repo adds CPP support with an example case in `cpp/`
 
 
@@ -9,6 +7,10 @@ NNPACK was used to optimize [Darknet](https://github.com/pjreddie/darknet) witho
 Idein's [qmkl](https://github.com/Idein/qmkl) is also used to accelerate the SGEMM using the GPU. This is slower than NNPACK on NEON-capable devices, and primarily useful for ARM CPUs without NEON.
 
 The NNPACK implementation in Darknet was improved to use transform-based convolution computation, allowing for 40%+ faster inference performance on non-initial frames. This is most useful for repeated inferences, ie. video, or if Darknet is left open to continue processing input instead of allowed to terminate after processing input.
+
+## CPP Example
+CPP example is located inside  `cpp/`  folder. 
+Make sure to update darknet paths in `CMakelists.txt`
 
 ## Build Instructions
 Log in to Raspberry Pi using SSH.<br/>
@@ -62,10 +64,6 @@ NNPACKOBJS = ../NNPACK/build/src/convolution-inference.c.o ../NNPACK/build/src/c
 $(SLIB): $(OBJS) $(NNPACKOBJS)
 	$(CC) $(CFLAGS) -shared $^ -lm /usr/lib/libpthreadpool.a -o $@ 
 ```
-
-## CPP Example
-CPP example is located inside  `cpp/`  folder. 
-Make sure to update darknet paths in `CMakelists.txt`
 
 
 ## Test

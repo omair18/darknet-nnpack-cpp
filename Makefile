@@ -1,6 +1,6 @@
 GPU=0
 CUDNN=0
-OPENCV=0
+OPENCV=1
 NNPACK=1
 NNPACK_FAST=1
 ARM_NEON=0
@@ -109,7 +109,7 @@ $(ALIB): $(OBJS)
 	$(AR) $(ARFLAGS) $@ $^
 
 $(SLIB): $(OBJS) $(NNPACKOBJS)
-	$(CC) $(CFLAGS) -shared $^ -lm /usr/lib/libpthreadpool.a -o $@
+	$(CC) $(CFLAGS)  -shared $^ -lm /usr/lib/libpthreadpool.a $(LDFLAGS) -o $@
 
 $(OBJDIR)%.o: %.c $(DEPS)
 	$(CC) $(COMMON) $(CFLAGS) -c $< -o $@
