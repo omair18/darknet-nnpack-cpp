@@ -1,0 +1,4 @@
+classes=1
+names=data/coco.names
+backup=backup/
+eval=coco
