@@ -34,9 +34,14 @@ sudo apt-get install clang
 ```
 ### Install modified [NNPACK](https://github.com/shizukachan/NNPACK)
 ```
-git clone https://github.com/shizukachan/NNPACK
+git clone https://github.com/digitalbrain79/NNPACK-darknet.git NNPACK
 cd NNPACK
 confu setup
+python ./configure.py --backend auto
+$NINJA_PATH/ninja
+sudo cp -a lib/* /usr/lib/
+sudo cp include/nnpack.h /usr/include/
+sudo cp deps/pthreadpool/include/pthreadpool.h /usr/include/
 ```
 Update cflags & cxxflags in `build.ninja`. Add ` -fPIC ` option.
 ```
