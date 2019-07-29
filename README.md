@@ -38,12 +38,8 @@ git clone https://github.com/digitalbrain79/NNPACK-darknet.git NNPACK
 cd NNPACK
 confu setup
 python ./configure.py --backend auto
-$NINJA_PATH/ninja
-sudo cp -a lib/* /usr/lib/
-sudo cp include/nnpack.h /usr/include/
-sudo cp deps/pthreadpool/include/pthreadpool.h /usr/include/
 ```
-Update cflags & cxxflags in `build.ninja`. Add ` -fPIC ` option.
+Update cflags & cxxflags in `build.ninja`.(Add ` -fPIC ` option.)
 ```
 cflags = -std=gnu99 -g -pthread -fPIC
 cxxflags = -std=gnu++11 -g -pthread -fPIC
