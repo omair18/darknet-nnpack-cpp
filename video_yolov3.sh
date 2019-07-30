@@ -1,1 +1,1 @@
-time ./darknet detector demo ../darknet/data/coco_1cls.data ../darknet/cfg/yolov3-tiny_stores.cfg ../darknet/weights/yolov3-tiny_stores_best.weights ../imaginex/001_001_002_20190616203007.mp4 -i 0 -thresh 0.25
+time ./darknet detector demo /home/gpu02/Documents/MEGA/darknet_alexey/data/coco_1cls.data /home/gpu02/Documents/MEGA/darknet_alexey/cfg/yolov3-tiny_3l_retail.cfg /home/gpu02/Documents/MEGA/darknet_alexey/weights/yolov3-tiny_3l_retail_best.weights /home/gpu02/Videos/emp_10min.mp4 -i 0 -thresh 0.25
