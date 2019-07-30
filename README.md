@@ -53,8 +53,8 @@ $NINJA_PATH/ninja
 ```
 Copy libs & header files to `/usr/`
 ```
-sudo cp -a lib/* /usr/lib/
-sudo cp include/nnpack.h /usr/include/
+sudo cp -a lib/* /usr/lib/ && \ 
+sudo cp include/nnpack.h /usr/include/ && \ 
 sudo cp deps/pthreadpool/include/pthreadpool.h /usr/include/
 ```
 
