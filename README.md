@@ -11,6 +11,7 @@ The NNPACK implementation in Darknet was improved to use transform-based convolu
 ## CPP Example
 CPP example is located inside  `cpp/`  folder. 
 Make sure to update darknet paths in `CMakelists.txt`
+After following the Build Instructions, navigate to `cpp/` and run `cmake . && make`
 
 ## Build Instructions
 Log in to Raspberry Pi using SSH.<br/>
