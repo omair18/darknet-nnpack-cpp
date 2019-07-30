@@ -36,7 +36,7 @@ sudo apt-get install clang
 ```
 ### Install modified [NNPACK](https://github.com/shizukachan/NNPACK)
 ```
-git clone https://github.com/digitalbrain79/NNPACK-darknet.git NNPACK
+git clone git clone https://github.com/shizukachan/NNPACK
 cd NNPACK
 confu setup
 python ./configure.py --backend auto
