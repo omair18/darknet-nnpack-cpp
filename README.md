@@ -12,6 +12,11 @@ The NNPACK implementation in Darknet was improved to use transform-based convolu
 CPP example is located inside  `cpp/`  folder. 
 Make sure to update darknet paths in `CMakelists.txt`.
 
+## Num of cores
+You can limit or increase the number of cores utilized by changing  `pthreadpool_create(4)` in detector.c to `pthreadpool_create(8)`.
+
+
+
 After following the Build Instructions, navigate to `cpp/` and run `cmake . && make`
 
 ## Build Instructions
