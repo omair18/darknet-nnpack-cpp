@@ -40,37 +40,27 @@ confu setup
 python ./configure.py --backend auto
 ```
 Update cflags & cxxflags in `build.ninja`.(Add ` -fPIC ` option.)
+
 ```
 cflags = -std=gnu99 -g -pthread -fPIC
 cxxflags = -std=gnu++11 -g -pthread -fPIC
 ```
-Build it. 
+Build NNPACK
 ```
 $NINJA_PATH/ninja
 ```
-Repeat the above steps again with following modification
+Copy libs & header files to `/usr/`
 ```
-python ./configure.py --backend scalar
-```
-Update cflags & cxxflags in `build.ninja`.(Add ` -fPIC ` option.)
-```
-cflags = -std=gnu99 -g -pthread -fPIC
-cxxflags = -std=gnu++11 -g -pthread -fPIC
-```
-Build it again and copy libs & header files to `/usr/`
-```
-bin/convolution-inference-smoketest
 sudo cp -a lib/* /usr/lib/
 sudo cp include/nnpack.h /usr/include/
 sudo cp deps/pthreadpool/include/pthreadpool.h /usr/include/
 ```
 
 ### Build Darknet-NNPACK 
-To avoid linker issues add all the *.o files of NNPACK compiled above in the Darknet's `Makefile`. Make sure to update the paths accordingly.
+To avoid linker issues while compiling CPP wrapper, add all the *.o files of NNPACK compiled above in the Darknet's `Makefile`. Make sure to update the paths accordingly.
 
 ```
-NNPACKOBJS = ../NNPACK/build/src/convolution-inference.c.o ../NNPACK/build/src/convolution-input-gradient.c.o ../NNPACK/build/src/convolution-kernel-gradient.c.o ../NNPACK/build/src/convolution-output.c.o ../NNPACK/build/src/fully-connected-inference.c.o ../NNPACK/build/src/fully-connected-output.c.o ../NNPACK/build/src/init.c.o ../NNPACK/build/src/pooling-output.c.o ../NNPACK/build/src/relu-input-gradient.c.o ../NNPACK/build/src/relu-output.c.o ../NNPACK/build/src/softmax-output.c.o ../NNPACK/build/src/ref/convolution-input-gradient.c.o ../NNPACK/build/src/ref/convolution-kernel.c.o ../NNPACK/build/src/ref/convolution-output.c.o ../NNPACK/build/src/ref/fully-connected-output.c.o ../NNPACK/build/src/ref/max-pooling-output.c.o ../NNPACK/build/src/ref/relu-input-gradient.c.o ../NNPACK/build/src/ref/relu-output.c.o ../NNPACK/build/src/ref/softmax-output.c.o ../NNPACK/build/src/ref/fft/aos.c.o ../NNPACK/build/src/ref/fft/forward-dualreal.c.o ../NNPACK/build/src/ref/fft/forward-real.c.o ../NNPACK/build/src/ref/fft/inverse-dualreal.c.o ../NNPACK/build/src/ref/fft/inverse-real.c.o ../NNPACK/build/src/scalar/2d-fourier-16x16.c.o ../NNPACK/build/src/scalar/2d-fourier-8x8.c.o ../NNPACK/build/src/scalar/2d-winograd-8x8-3x3.c.o ../NNPACK/build/src/scalar/fft-aos.c.o ../NNPACK/build/src/scalar/fft-dualreal.c.o ../NNPACK/build/src/scalar/fft-real.c.o ../NNPACK/build/src/scalar/fft-soa.c.o ../NNPACK/build/src/scalar/relu.c.o ../NNPACK/build/src/scalar/softmax.c.o ../NNPACK/build/src/scalar/blas/cgemm.c.o ../NNPACK/build/src/scalar/blas/cgemm-conjb.c.o ../NNPACK/build/src/scalar/blas/cgemm-conjb-transc.c.o ../NNPACK/build/src/scalar/blas/conv1x1.c.o ../NNPACK/build/src/scalar/blas/s2gemm.c.o ../NNPACK/build/src/scalar/blas/s2gemm-transc.c.o ../NNPACK/build/src/scalar/blas/sdotxf.c.o ../NNPACK/build/src/scalar/blas/sgemm.c.o ../NNPACK/build/src/scalar/blas/shdotxf.c.o ../NNPACK/build/src/x86_64-fma/2d-fourier-16x16.py.o ../NNPACK/build/src/x86_64-fma/2d-fourier-8x8.py.o ../NNPACK/build/src/x86_64-fma/2d-winograd-8x8-3x3.py.o ../NNPACK/build/src/x86_64-fma/fft-aos.py.o ../NNPACK/build/src/x86_64-fma/fft-dualreal.py.o ../NNPACK/build/src/x86_64-fma/fft-real.py.o ../NNPACK/build/src/x86_64-fma/fft-soa.py.o ../NNPACK/build/src/x86_64-fma/ifft-dualreal.py.o ../NNPACK/build/src/x86_64-fma/ifft-real.py.o ../NNPACK/build/src/x86_64-fma/max-pooling.py.o ../NNPACK/build/src/x86_64-fma/relu.py.o ../NNPACK/build/src/x86_64-fma/softmax.c.o ../NNPACK/build/src/x86_64-fma/softmax.py.o ../NNPACK/build/src/x86_64-fma/winograd-f6k3.py.o ../NNPACK/build/src/x86_64-fma/blas/c8gemm.py.o ../NNPACK/build/src/x86_64-fma/blas/conv1x1.py.o ../NNPACK/build/src/x86_64-fma/blas/s4c6gemm.py.o ../NNPACK/build/src/x86_64-fma/blas/s8gemm.py.o ../NNPACK/build/src/x86_64-fma/blas/sdotxf.py.o ../NNPACK/build/src/x86_64-fma/blas/sgemm.py.o ../NNPACK/build/src/x86_64-fma/blas/shdotxf.py.o
-
+NNPACKOBJS = ../NNPACK/build/src/convolution-inference.c.o ../NNPACK/build/src/convolution-input-gradient.c.o ../NNPACK/build/src/convolution-kernel-gradient.c.o ../NNPACK/build/src/convolution-output.c.o ../NNPACK/build/src/fully-connected-inference.c.o ../NNPACK/build/src/fully-connected-output.c.o ../NNPACK/build/src/init.c.o ../NNPACK/build/src/pooling-output.c.o ../NNPACK/build/src/relu-input-gradient.c.o ../NNPACK/build/src/relu-output.c.o ../NNPACK/build/src/softmax-output.c.o ../NNPACK/build/src/ref/convolution-input-gradient.c.o ../NNPACK/build/src/ref/convolution-kernel.c.o ../NNPACK/build/src/ref/convolution-output.c.o ../NNPACK/build/src/ref/fully-connected-output.c.o ../NNPACK/build/src/ref/max-pooling-output.c.o ../NNPACK/build/src/ref/relu-input-gradient.c.o ../NNPACK/build/src/ref/relu-output.c.o ../NNPACK/build/src/ref/softmax-output.c.o ../NNPACK/build/src/ref/fft/aos.c.o ../NNPACK/build/src/ref/fft/forward-dualreal.c.o ../NNPACK/build/src/ref/fft/forward-real.c.o ../NNPACK/build/src/ref/fft/inverse-dualreal.c.o ../NNPACK/build/src/ref/fft/inverse-real.c.o ../NNPACK/build/src/x86_64-fma/2d-fourier-16x16.py.o ../NNPACK/build/src/x86_64-fma/2d-fourier-8x8.py.o ../NNPACK/build/src/x86_64-fma/2d-winograd-8x8-3x3.py.o ../NNPACK/build/src/x86_64-fma/fft-aos.py.o ../NNPACK/build/src/x86_64-fma/fft-dualreal.py.o ../NNPACK/build/src/x86_64-fma/fft-real.py.o ../NNPACK/build/src/x86_64-fma/fft-soa.py.o ../NNPACK/build/src/x86_64-fma/ifft-dualreal.py.o ../NNPACK/build/src/x86_64-fma/ifft-real.py.o ../NNPACK/build/src/x86_64-fma/max-pooling.py.o ../NNPACK/build/src/x86_64-fma/relu.py.o ../NNPACK/build/src/x86_64-fma/softmax.c.o ../NNPACK/build/src/x86_64-fma/softmax.py.o ../NNPACK/build/src/x86_64-fma/winograd-f6k3.py.o ../NNPACK/build/src/x86_64-fma/blas/c8gemm.py.o ../NNPACK/build/src/x86_64-fma/blas/conv1x1.py.o ../NNPACK/build/src/x86_64-fma/blas/s4c6gemm.py.o ../NNPACK/build/src/x86_64-fma/blas/s8gemm.py.o ../NNPACK/build/src/x86_64-fma/blas/sdotxf.py.o ../NNPACK/build/src/x86_64-fma/blas/sgemm.py.o ../NNPACK/build/src/x86_64-fma/blas/shdotxf.py.o
 .
 .
 .

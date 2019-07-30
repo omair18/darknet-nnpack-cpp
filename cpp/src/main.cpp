@@ -17,13 +17,13 @@ int main() {
     // Define constants that were used when Darknet network was trained.
     // This is pretty much hardcoded code zone, just to give an idea what is needed.
     // -----------------------------------------------------------------------------------------------------------------
-    static char *cfg_file = const_cast<char *>("/windows/D/workspace/CNN/darknet/cfg/yolov3-tiny_obj.cfg");
+    static char *cfg_file = const_cast<char *>("/home/gpu02/Documents/MEGA/darknet_alexey/cfg/yolov3-tiny_3l_retail.cfg");
     // Path to weight file.
-    static char *weight_file = const_cast<char *>("/windows/D/workspace/CNN/darknet/weights/yolov3-tiny_obj_best.weights");
+    static char *weight_file = const_cast<char *>("/home/gpu02/Documents/MEGA/darknet_alexey/weights/yolov3-tiny_3l_retail_best.weights");
     // Path to a file describing classes names.
-    static char *names_file = const_cast<char *>("/windows/D/workspace/CNN/darknet/data/coco1.names");
+    static char *names_file = const_cast<char *>("/home/gpu02/Documents/MEGA/darknet_alexey/data/coco1.names");
     // This is an image to test.
-    static char *input = const_cast<char *>("/home/omair/Pictures/img.png");
+    static char *input = const_cast<char *>("/home/gpu02/Pictures/img.png");
 
  
     // Define thresholds for predicted class.

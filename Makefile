@@ -1,8 +1,8 @@
 GPU=0
 CUDNN=0
 OPENCV=1
-nnpack=1
-nnpack_FAST=1
+NNPACK=1
+NNPACK_FAST=1
 ARM_NEON=0
 OPENMP=1
 DEBUG=0
@@ -28,11 +28,11 @@ NVCC=nvcc
 AR=ar
 ARFLAGS=rcs
 OPTS=-Ofast
-LDFLAGS= -lm -pthread -lm
+LDFLAGS= -pthread -lm
 COMMON= -Iinclude/ -Isrc/
 #CFLAGS=-Wall -Wno-unknown-pragmas -Wfatal-errors -fPIC
 #CFLAGS=-Wall -Wno-unknown-pragmas -Wfatal-errors -fPIC -march=native -mfpmath=sse
-CFLAGS=-Wall -Wno-unknown-pragmas -Wfatal-errors -fPIC -march=native -lm
+CFLAGS=-Wall -Wno-unknown-pragmas -Wfatal-errors -fPIC -march=native
 
 ifeq ($(OPENMP), 1) 
 CFLAGS+= -fopenmp
@@ -47,8 +47,7 @@ CFLAGS+=$(OPTS)
 ifeq ($(OPENCV), 1) 
 COMMON+= -DOPENCV
 CFLAGS+= -DOPENCV 
-LDFLAGS+= `pkg-config --libs opencv` -lstdc++  -lm
-
+LDFLAGS+= `pkg-config --libs opencv`
 COMMON+= `pkg-config --cflags opencv` 
 endif
 
@@ -70,15 +69,15 @@ CFLAGS+= -DQPU_GEMM
 LDFLAGS+= -lqmkl
 endif
 
-ifeq ($(nnpack), 1)
-COMMON+= -Dnnpack
-CFLAGS+= -Dnnpack
-LDFLAGS+= -lnnpack -lpthreadpool -lm
+ifeq ($(NNPACK), 1)
+COMMON+= -DNNPACK
+CFLAGS+= -DNNPACK
+LDFLAGS+= -lnnpack -lpthreadpool
 endif
 
-ifeq ($(nnpack_FAST), 1)
-COMMON+= -Dnnpack_FAST
-CFLAGS+= -Dnnpack_FAST
+ifeq ($(NNPACK_FAST), 1)
+COMMON+= -DNNPACK_FAST
+CFLAGS+= -DNNPACK_FAST
 endif
 
 ifeq ($(ARM_NEON), 1)
@@ -97,7 +96,8 @@ endif
 EXECOBJ = $(addprefix $(OBJDIR), $(EXECOBJA))
 OBJS = $(addprefix $(OBJDIR), $(OBJ))
 DEPS = $(wildcard src/*.h) Makefile include/darknet.h
-nnpackOBJS = ../nnpack/build/src/convolution-inference.c.o ../nnpack/build/src/convolution-input-gradient.c.o ../nnpack/build/src/convolution-kernel-gradient.c.o ../nnpack/build/src/convolution-output.c.o ../nnpack/build/src/fully-connected-inference.c.o ../nnpack/build/src/fully-connected-output.c.o ../nnpack/build/src/init.c.o ../nnpack/build/src/pooling-output.c.o ../nnpack/build/src/relu-input-gradient.c.o ../nnpack/build/src/relu-output.c.o ../nnpack/build/src/softmax-output.c.o ../nnpack/build/src/ref/convolution-input-gradient.c.o ../nnpack/build/src/ref/convolution-kernel.c.o ../nnpack/build/src/ref/convolution-output.c.o ../nnpack/build/src/ref/fully-connected-output.c.o ../nnpack/build/src/ref/max-pooling-output.c.o ../nnpack/build/src/ref/relu-input-gradient.c.o ../nnpack/build/src/ref/relu-output.c.o ../nnpack/build/src/ref/softmax-output.c.o ../nnpack/build/src/ref/fft/aos.c.o ../nnpack/build/src/ref/fft/forward-dualreal.c.o ../nnpack/build/src/ref/fft/forward-real.c.o ../nnpack/build/src/ref/fft/inverse-dualreal.c.o ../nnpack/build/src/ref/fft/inverse-real.c.o ../nnpack/build/src/scalar/2d-fourier-16x16.c.o ../nnpack/build/src/scalar/2d-fourier-8x8.c.o ../nnpack/build/src/scalar/2d-winograd-8x8-3x3.c.o ../nnpack/build/src/scalar/fft-aos.c.o ../nnpack/build/src/scalar/fft-dualreal.c.o ../nnpack/build/src/scalar/fft-real.c.o ../nnpack/build/src/scalar/fft-soa.c.o ../nnpack/build/src/scalar/relu.c.o ../nnpack/build/src/scalar/softmax.c.o ../nnpack/build/src/scalar/blas/cgemm.c.o ../nnpack/build/src/scalar/blas/cgemm-conjb.c.o ../nnpack/build/src/scalar/blas/cgemm-conjb-transc.c.o ../nnpack/build/src/scalar/blas/conv1x1.c.o ../nnpack/build/src/scalar/blas/s2gemm.c.o ../nnpack/build/src/scalar/blas/s2gemm-transc.c.o ../nnpack/build/src/scalar/blas/sdotxf.c.o ../nnpack/build/src/scalar/blas/sgemm.c.o ../nnpack/build/src/scalar/blas/shdotxf.c.o ../nnpack/build/src/x86_64-fma/2d-fourier-16x16.py.o ../nnpack/build/src/x86_64-fma/2d-fourier-8x8.py.o ../nnpack/build/src/x86_64-fma/2d-winograd-8x8-3x3.py.o ../nnpack/build/src/x86_64-fma/fft-aos.py.o ../nnpack/build/src/x86_64-fma/fft-dualreal.py.o ../nnpack/build/src/x86_64-fma/fft-real.py.o ../nnpack/build/src/x86_64-fma/fft-soa.py.o ../nnpack/build/src/x86_64-fma/ifft-dualreal.py.o ../nnpack/build/src/x86_64-fma/ifft-real.py.o ../nnpack/build/src/x86_64-fma/max-pooling.py.o ../nnpack/build/src/x86_64-fma/relu.py.o ../nnpack/build/src/x86_64-fma/softmax.c.o ../nnpack/build/src/x86_64-fma/softmax.py.o ../nnpack/build/src/x86_64-fma/winograd-f6k3.py.o ../nnpack/build/src/x86_64-fma/blas/c8gemm.py.o ../nnpack/build/src/x86_64-fma/blas/conv1x1.py.o ../nnpack/build/src/x86_64-fma/blas/s4c6gemm.py.o ../nnpack/build/src/x86_64-fma/blas/s8gemm.py.o ../nnpack/build/src/x86_64-fma/blas/sdotxf.py.o ../nnpack/build/src/x86_64-fma/blas/sgemm.py.o ../nnpack/build/src/x86_64-fma/blas/shdotxf.py.o
+NNPACKOBJS = ../NNPACK/build/src/convolution-inference.c.o ../NNPACK/build/src/convolution-input-gradient.c.o ../NNPACK/build/src/convolution-kernel-gradient.c.o ../NNPACK/build/src/convolution-output.c.o ../NNPACK/build/src/fully-connected-inference.c.o ../NNPACK/build/src/fully-connected-output.c.o ../NNPACK/build/src/init.c.o ../NNPACK/build/src/pooling-output.c.o ../NNPACK/build/src/relu-input-gradient.c.o ../NNPACK/build/src/relu-output.c.o ../NNPACK/build/src/softmax-output.c.o ../NNPACK/build/src/ref/convolution-input-gradient.c.o ../NNPACK/build/src/ref/convolution-kernel.c.o ../NNPACK/build/src/ref/convolution-output.c.o ../NNPACK/build/src/ref/fully-connected-output.c.o ../NNPACK/build/src/ref/max-pooling-output.c.o ../NNPACK/build/src/ref/relu-input-gradient.c.o ../NNPACK/build/src/ref/relu-output.c.o ../NNPACK/build/src/ref/softmax-output.c.o ../NNPACK/build/src/ref/fft/aos.c.o ../NNPACK/build/src/ref/fft/forward-dualreal.c.o ../NNPACK/build/src/ref/fft/forward-real.c.o ../NNPACK/build/src/ref/fft/inverse-dualreal.c.o ../NNPACK/build/src/ref/fft/inverse-real.c.o ../NNPACK/build/src/x86_64-fma/2d-fourier-16x16.py.o ../NNPACK/build/src/x86_64-fma/2d-fourier-8x8.py.o ../NNPACK/build/src/x86_64-fma/2d-winograd-8x8-3x3.py.o ../NNPACK/build/src/x86_64-fma/fft-aos.py.o ../NNPACK/build/src/x86_64-fma/fft-dualreal.py.o ../NNPACK/build/src/x86_64-fma/fft-real.py.o ../NNPACK/build/src/x86_64-fma/fft-soa.py.o ../NNPACK/build/src/x86_64-fma/ifft-dualreal.py.o ../NNPACK/build/src/x86_64-fma/ifft-real.py.o ../NNPACK/build/src/x86_64-fma/max-pooling.py.o ../NNPACK/build/src/x86_64-fma/relu.py.o ../NNPACK/build/src/x86_64-fma/softmax.c.o ../NNPACK/build/src/x86_64-fma/softmax.py.o ../NNPACK/build/src/x86_64-fma/winograd-f6k3.py.o ../NNPACK/build/src/x86_64-fma/blas/c8gemm.py.o ../NNPACK/build/src/x86_64-fma/blas/conv1x1.py.o ../NNPACK/build/src/x86_64-fma/blas/s4c6gemm.py.o ../NNPACK/build/src/x86_64-fma/blas/s8gemm.py.o ../NNPACK/build/src/x86_64-fma/blas/sdotxf.py.o ../NNPACK/build/src/x86_64-fma/blas/sgemm.py.o ../NNPACK/build/src/x86_64-fma/blas/shdotxf.py.o
+
 #all: obj backup results $(SLIB) $(ALIB) $(EXEC)
 all: obj  results $(SLIB) $(ALIB) $(EXEC)
 
@@ -108,7 +108,8 @@ $(EXEC): $(EXECOBJ) $(ALIB)
 $(ALIB): $(OBJS)
 	$(AR) $(ARFLAGS) $@ $^
 
-$(SLIB): $(OBJS) $(nnpackOBJS)
+$(SLIB): $(OBJS) $(NNPACKOBJS)
+	#$(CC) $(CFLAGS)  -shared $^ $(LDFLAGS) -o $@
 	$(CC) $(CFLAGS)  -shared $^ -lm /usr/lib/libpthreadpool.a $(LDFLAGS) -o $@
 
 $(OBJDIR)%.o: %.c $(DEPS)
