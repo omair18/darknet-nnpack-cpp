@@ -542,6 +542,7 @@ void rgbgr_image(image im)
 #ifdef OPENCV
 void show_image_cv(image p, const char *name, IplImage *disp)
 {
+if (FLAG_SHOW) {
     int x,y,k;
     if(p.c == 3) rgbgr_image(p);
     //normalize_image(copy);
@@ -549,9 +550,11 @@ void show_image_cv(image p, const char *name, IplImage *disp)
     char buff[256];
     //sprintf(buff, "%s (%d)", name, windows);
     sprintf(buff, "%s", name);
+    //printf("%s\n", buff);
 
     int step = disp->widthStep;
-    cvNamedWindow(buff, CV_WINDOW_NORMAL); 
+    if (FLAG_SHOW)
+    	cvNamedWindow(buff, CV_WINDOW_NORMAL); 
     //cvMoveWindow(buff, 100*(windows%10) + 200*(windows/10), 100*(windows%10));
     ++windows;
     for(y = 0; y < p.h; ++y){
@@ -573,7 +576,8 @@ void show_image_cv(image p, const char *name, IplImage *disp)
         cvResize(buffer, disp, CV_INTER_LINEAR);
         cvReleaseImage(&buffer);
     }
-    cvShowImage(buff, disp);
+    if (FLAG_SHOW)
+    	cvShowImage(buff, disp);
     {
 		CvSize size;
 		{
@@ -595,6 +599,7 @@ void show_image_cv(image p, const char *name, IplImage *disp)
 		printf("\n cvWriteFrame \n");
 	}
     // cvReleaseImage(&disp);
+   }
 }
 #endif
 
@@ -604,7 +609,8 @@ void show_image(image p, const char *name)
     IplImage *disp = cvCreateImage(cvSize(p.w,p.h), IPL_DEPTH_8U, p.c);
     image copy = copy_image(p);
     constrain_image(copy);
-    show_image_cv(copy, name, disp);
+    if (FLAG_SHOW)
+    	show_image_cv(copy, name, disp);
     free_image(copy);
     cvReleaseImage(&disp);
 #else
@@ -1571,7 +1577,8 @@ void test_resize(char *filename)
         show_image(c, "rand");
         printf("%f %f %f\n", dhue, dsat, dexp);
         free_image(c);
-        cvWaitKey(0);
+	if (FLAG_SHOW)
+		cvWaitKey(0);
     }
 #endif
 }

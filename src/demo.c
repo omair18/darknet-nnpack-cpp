@@ -260,6 +260,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
     ipl = cvCreateImage(cvSize(buff[0].w,buff[0].h), IPL_DEPTH_8U, buff[0].c);
 
     int count = 0;
+    if (FLAG_SHOW)
     if(!prefix){
         cvNamedWindow("Demo", CV_WINDOW_NORMAL); 
         if(fullscreen){

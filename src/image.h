@@ -16,6 +16,7 @@ image ipl_to_image(IplImage* src);
 void ipl_into_image(IplImage* src, image im);
 void flush_stream_buffer(CvCapture *cap, int n);
 void show_image_cv(image p, const char *name, IplImage *disp);
+#define FLAG_SHOW 0
 #endif
 #endif
 
